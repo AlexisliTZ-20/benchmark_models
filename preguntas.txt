@@ -1,0 +1,10 @@
+¿Quién es el autor o los autores del documento?
+¿Cuál es el objetivo principal del documento?
+¿Qué problema se intenta resolver en el contenido?
+¿Qué metodología se aplicó para alcanzar los objetivos?
+¿Cuáles son los resultados o hallazgos más relevantes?
+¿Cuáles son las conclusiones principales que ofrece el documento?
+¿Se menciona alguna limitación, recomendación o trabajo futuro?
+Haz un resumen general del contenido del documento.
+¿Cuáles son los conceptos clave que se abordan o explican?
+¿Cómo se relaciona el contenido con su aplicación práctica o contexto real?

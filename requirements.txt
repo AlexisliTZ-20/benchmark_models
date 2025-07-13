@@ -1,0 +1,42 @@
+# ==========================================
+# Requisitos para Benchmark RAG-LLM sobre PDF
+# ==========================================
+
+# -- CORE LangChain y componentes RAG --
+langchain>=0.1.0
+langchain_community>=0.0.20
+
+# -- Vectorstore local (FAISS) --
+faiss-cpu>=1.7.4
+
+# -- Embeddings con Ollama --
+# (Recuerda tener Ollama corriendo y el modelo 'nomic-embed-text' descargado)
+# ollama pull nomic-embed-text
+
+# -- Procesamiento y carga de PDFs --
+PyMuPDF>=1.23.0    # (si usas PyPDFLoader, requiere PyMuPDF)
+
+# -- Manipulación de datos --
+pandas>=1.5.0
+
+# -- Medición de recursos del sistema --
+psutil>=5.9.0
+
+# -- Exportación a Excel --
+openpyxl           # Necesario para pandas.to_excel()
+
+# -- Graficación --
+matplotlib         # Para generación de gráficos automáticos
+
+# -- Detección y monitoreo de GPU (NVIDIA) --
+pynvml             # Opcional, solo si tienes GPU NVIDIA
+
+# -- Utilidades adicionales --
+tqdm               # Opcional, para barras de progreso si quieres añadirlas
+tabulate 
+seaborn
+# -- Otras dependencias recomendadas --
+# Si agregas o usas código que depende de otra librería, anótala aquí
+
+# -- NOTA --
+# Si usas otro loader de PDF (ej. PyPDF2), agrega la dependencia correspondiente.
