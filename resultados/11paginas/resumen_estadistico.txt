@@ -1,0 +1,152 @@
+===== RESUMEN ESTADÍSTICO POR MODELO =====
+
+--- Modelo: Llama-3 ---
+  Latencia (seg):
+    Media: 61.969
+    Mediana: 64.105
+    Desv. estándar: 8.544
+    Mínimo: 47.550
+    Máximo: 72.580
+    Q1: 55.832 | Q3: 68.900
+  Coherencia:
+    Media: 1.000
+    Mediana: 1.000
+    Desv. estándar: 0.000
+    Mínimo: 1.000
+    Máximo: 1.000
+    Q1: 1.000 | Q3: 1.000
+  Longitud respuesta:
+    Media: 1248.400
+    Mediana: 1288.500
+    Desv. estándar: 226.233
+    Mínimo: 800.000
+    Máximo: 1619.000
+    Q1: 1131.500 | Q3: 1373.750
+  Respuestas con error: 0/10 (0.0%)
+  Respuestas perfectamente coherentes: 10/10 (100.0%)
+
+--- Modelo: Mistral ---
+  Latencia (seg):
+    Media: 57.794
+    Mediana: 54.135
+    Desv. estándar: 20.807
+    Mínimo: 34.410
+    Máximo: 104.320
+    Q1: 40.645 | Q3: 70.447
+  Coherencia:
+    Media: 1.000
+    Mediana: 1.000
+    Desv. estándar: 0.000
+    Mínimo: 1.000
+    Máximo: 1.000
+    Q1: 1.000 | Q3: 1.000
+  Longitud respuesta:
+    Media: 1231.500
+    Mediana: 1087.000
+    Desv. estándar: 592.525
+    Mínimo: 454.000
+    Máximo: 2489.000
+    Q1: 840.000 | Q3: 1566.000
+  Respuestas con error: 0/10 (0.0%)
+  Respuestas perfectamente coherentes: 10/10 (100.0%)
+
+--- Modelo: OpenHermes ---
+  Latencia (seg):
+    Media: 65.373
+    Mediana: 64.135
+    Desv. estándar: 11.372
+    Mínimo: 46.880
+    Máximo: 93.340
+    Q1: 61.358 | Q3: 65.965
+  Coherencia:
+    Media: 1.000
+    Mediana: 1.000
+    Desv. estándar: 0.000
+    Mínimo: 1.000
+    Máximo: 1.000
+    Q1: 1.000 | Q3: 1.000
+  Longitud respuesta:
+    Media: 1578.000
+    Mediana: 1516.500
+    Desv. estándar: 338.944
+    Mínimo: 1023.000
+    Máximo: 2357.000
+    Q1: 1449.000 | Q3: 1609.750
+  Respuestas con error: 1/10 (10.0%)
+  Respuestas perfectamente coherentes: 10/10 (100.0%)
+
+--- Modelo: Phi-3 ---
+  Latencia (seg):
+    Media: 56.883
+    Mediana: 51.215
+    Desv. estándar: 30.501
+    Mínimo: 26.370
+    Máximo: 138.820
+    Q1: 39.138 | Q3: 64.240
+  Coherencia:
+    Media: 0.950
+    Mediana: 1.000
+    Desv. estándar: 0.150
+    Mínimo: 0.500
+    Máximo: 1.000
+    Q1: 1.000 | Q3: 1.000
+  Longitud respuesta:
+    Media: 2668.400
+    Mediana: 2399.000
+    Desv. estándar: 1678.601
+    Mínimo: 837.000
+    Máximo: 7080.000
+    Q1: 1694.000 | Q3: 3022.000
+  Respuestas con error: 0/10 (0.0%)
+  Respuestas perfectamente coherentes: 9/10 (90.0%)
+
+--- Modelo: Zephyr ---
+  Latencia (seg):
+    Media: 60.022
+    Mediana: 59.880
+    Desv. estándar: 16.658
+    Mínimo: 39.930
+    Máximo: 95.480
+    Q1: 45.670 | Q3: 65.692
+  Coherencia:
+    Media: 0.900
+    Mediana: 1.000
+    Desv. estándar: 0.200
+    Mínimo: 0.500
+    Máximo: 1.000
+    Q1: 1.000 | Q3: 1.000
+  Longitud respuesta:
+    Media: 1327.400
+    Mediana: 1238.000
+    Desv. estándar: 477.862
+    Mínimo: 779.000
+    Máximo: 2376.000
+    Q1: 988.500 | Q3: 1512.250
+  Respuestas con error: 0/10 (0.0%)
+  Respuestas perfectamente coherentes: 8/10 (80.0%)
+
+===== RANKING DE MODELOS POR MÉTRICA =====
+
+Ranking por Latencia (seg) (mejor primero):
+  1. Phi-3: 56.883
+  2. Mistral: 57.794
+  3. Zephyr: 60.022
+  4. Llama-3: 61.969
+  5. OpenHermes: 65.373
+
+Ranking por Coherencia (mejor primero):
+  1. Llama-3: 1.000
+  2. Mistral: 1.000
+  3. OpenHermes: 1.000
+  4. Phi-3: 0.950
+  5. Zephyr: 0.900
+
+Ranking por Longitud respuesta (mejor primero):
+  1. Phi-3: 2668.400
+  2. OpenHermes: 1578.000
+  3. Zephyr: 1327.400
+  4. Llama-3: 1248.400
+  5. Mistral: 1231.500
+
+===== CORRELACIÓN LONGITUD-LATENCIA =====
+Correlación Pearson longitud-latencia: 0.751

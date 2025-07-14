@@ -37,6 +37,7 @@ tabulate
 seaborn
 # -- Otras dependencias recomendadas --
 # Si agregas o usas código que depende de otra librería, anótala aquí
+sentence-transformers
 
 # -- NOTA --
 # Si usas otro loader de PDF (ej. PyPDF2), agrega la dependencia correspondiente.

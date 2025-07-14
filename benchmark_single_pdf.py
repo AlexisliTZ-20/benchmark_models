@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Benchmark académico de modelos RAG-LLM sobre PDF: análisis de eficiencia y calidad.
 
@@ -320,10 +318,7 @@ def main():
     df = pd.DataFrame(resultados)
     generar_reportes(df, out_dir)
     graficos_academicos(df, out_dir)
-
-    # ------- AQUI LLAMAS EL RESUMEN ESTADÍSTICO -------
     resumen_estadistico(df, out_dir)
-    # ---------------------------------------------------
 
     print(f"\nTodos los archivos de resultados y gráficos están en: {out_dir}\n")
     print(tabulate(df[["Modelo","Pregunta","Latencia (seg)","Coherencia","Contiene Error","Observación"]],
