@@ -142,44 +142,149 @@ def generar_reportes(df: pd.DataFrame, out_dir: str):
     print(f"\nResultados guardados en {csv_path} y (si no hay advertencia) {xlsx_path}")
 
 def graficos_academicos(df: pd.DataFrame, out_dir: str):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    import numpy as np
+
     os.makedirs(out_dir, exist_ok=True)
     plt.style.use('seaborn-v0_8-darkgrid')
-    font = {'family': 'serif', 'size': 13}
+    font = {'family': 'serif', 'size': 15}
     plt.rc('font', **font)
-    # Boxplot de latencia
+
+    # ============ VIOLINPLOTS: Distribución Latencia y Coherencia ============
     df_lat = df[df["Latencia (seg)"] != "ERROR"].copy()
     df_lat["Latencia (seg)"] = pd.to_numeric(df_lat["Latencia (seg)"], errors="coerce")
-    plt.figure(figsize=(9, 6))
-    sns.boxplot(data=df_lat, x="Modelo", y="Latencia (seg)", showmeans=True,
-                meanprops={"marker":"o","markerfacecolor":"white","markeredgecolor":"black"})
-    plt.title("Distribución de Latencia por Modelo")
-    plt.ylabel("Latencia (segundos)")
-    plt.xticks(rotation=30)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(data=df_lat, x="Modelo", y="Latencia (seg)", inner="quartile", ax=ax)
+    sns.swarmplot(data=df_lat, x="Modelo", y="Latencia (seg)", color=".3", size=4, ax=ax)
+    plt.title("Distribución de latencias por modelo")
     plt.tight_layout()
-    plt.savefig(os.path.join(out_dir, "boxplot_latencia.png"), dpi=300)
-    plt.savefig(os.path.join(out_dir, "boxplot_latencia.pdf"))
+    fig.savefig(os.path.join(out_dir, "violin_latencia.png"), dpi=300)
+    fig.savefig(os.path.join(out_dir, "violin_latencia.pdf"))
     plt.close()
-    # Boxplot de coherencia
-    plt.figure(figsize=(9, 6))
-    sns.boxplot(data=df, x="Modelo", y="Coherencia", showmeans=True,
-                meanprops={"marker":"o","markerfacecolor":"white","markeredgecolor":"black"})
-    plt.title("Distribución de Coherencia por Modelo")
-    plt.ylabel("Coherencia")
-    plt.xticks(rotation=30)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.violinplot(data=df, x="Modelo", y="Coherencia", inner="quartile", ax=ax)
+    sns.swarmplot(data=df, x="Modelo", y="Coherencia", color=".3", size=4, ax=ax)
+    plt.title("Distribución de coherencia por modelo")
     plt.tight_layout()
-    plt.savefig(os.path.join(out_dir, "boxplot_coherencia.png"), dpi=300)
-    plt.savefig(os.path.join(out_dir, "boxplot_coherencia.pdf"))
+    fig.savefig(os.path.join(out_dir, "violin_coherencia.png"), dpi=300)
+    fig.savefig(os.path.join(out_dir, "violin_coherencia.pdf"))
     plt.close()
-    # Heatmap de errores por modelo y pregunta
+
+    # ============ SCATTERPLOT: Latencia vs Longitud respuesta =============
+    df_scatter = df_lat[df_lat["Longitud respuesta"]>0]
+    fig, ax = plt.subplots(figsize=(8,6))
+    sns.scatterplot(data=df_scatter, x="Longitud respuesta", y="Latencia (seg)", hue="Modelo", ax=ax)
+    sns.regplot(data=df_scatter, x="Longitud respuesta", y="Latencia (seg)", scatter=False, ax=ax, color='black')
+    plt.title("Relación entre longitud de respuesta y latencia")
+    plt.tight_layout()
+    fig.savefig(os.path.join(out_dir, "scatter_longitud_latencia.png"), dpi=300)
+    fig.savefig(os.path.join(out_dir, "scatter_longitud_latencia.pdf"))
+    plt.close()
+
+    # ============ HEATMAP: Errores por pregunta/modelo =============
     error_matrix = df.pivot_table(index="Pregunta", columns="Modelo", values="Contiene Error", fill_value=0)
-    plt.figure(figsize=(10, max(4, 0.25*len(error_matrix))))
-    sns.heatmap(error_matrix, cmap="Reds", annot=True, cbar=True, linewidths=0.5, fmt='d')
+    fig, ax = plt.subplots(figsize=(10, max(4, 0.35*len(error_matrix))))
+    sns.heatmap(error_matrix.astype(int), cmap="Reds", annot=True, cbar=True, linewidths=0.5, fmt='d')
     plt.title("Mapa de calor de errores por pregunta y modelo")
     plt.tight_layout()
-    plt.savefig(os.path.join(out_dir, "heatmap_errores.png"), dpi=300)
-    plt.savefig(os.path.join(out_dir, "heatmap_errores.pdf"))
+    fig.savefig(os.path.join(out_dir, "heatmap_errores.png"), dpi=300)
+    fig.savefig(os.path.join(out_dir, "heatmap_errores.pdf"))
     plt.close()
-    print(f"Gráficos (PNG y PDF) guardados en {out_dir}")
+
+    # ============ RADAR CHART: Resumen multicriterio por modelo ============
+    from math import pi
+    summary = df.groupby("Modelo").agg({
+        "Latencia (seg)": "mean",
+        "Coherencia": "mean",
+        "Longitud respuesta": "mean",
+        "Contiene Error": "mean"
+    })
+    categories = summary.columns.tolist()
+    N = len(categories)
+    angles = [n / float(N) * 2 * pi for n in range(N)]
+    angles += angles[:1]
+    fig = plt.figure(figsize=(8,8))
+    ax = plt.subplot(111, polar=True)
+    for i, row in summary.iterrows():
+        values = row.tolist()
+        values += values[:1]
+        ax.plot(angles, values, label=i)
+        ax.fill(angles, values, alpha=0.15)
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(categories)
+    plt.title("Comparación multicriterio por modelo")
+    plt.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
+    fig.savefig(os.path.join(out_dir, "radar_modelos.png"), dpi=300)
+    fig.savefig(os.path.join(out_dir, "radar_modelos.pdf"))
+    plt.close()
+
+    # ============ BARRAS APILADAS: Composición de errores ============
+    error_comp = df.groupby(["Modelo", "Contiene Error"]).size().unstack(fill_value=0)
+    fig, ax = plt.subplots(figsize=(9,5))
+    error_comp.plot(kind="bar", stacked=True, color=["#4daf4a", "#e41a1c"], ax=ax)
+    plt.title("Composición de respuestas correctas/incorrectas por modelo")
+    plt.ylabel("Cantidad de respuestas")
+    plt.tight_layout()
+    fig.savefig(os.path.join(out_dir, "barras_apiladas_errores.png"), dpi=300)
+    fig.savefig(os.path.join(out_dir, "barras_apiladas_errores.pdf"))
+    plt.close()
+
+    print(f"Gráficos científicos avanzados (violinplot, scatterplot, radar, heatmap, barras apiladas) guardados en {out_dir}")
+
+def resumen_estadistico(df: pd.DataFrame, out_dir: str):
+    import numpy as np
+
+    path_txt = os.path.join(out_dir, "resumen_estadistico.txt")
+    with open(path_txt, "w", encoding="utf-8") as f:
+        f.write("===== RESUMEN ESTADÍSTICO POR MODELO =====\n\n")
+        # Para cada modelo, mostrar resumen estadístico de cada métrica clave
+        metricas = ["Latencia (seg)", "Coherencia", "Longitud respuesta"]
+        for modelo, dfm in df.groupby("Modelo"):
+            f.write(f"--- Modelo: {modelo} ---\n")
+            for metrica in metricas:
+                datos = pd.to_numeric(dfm[metrica], errors="coerce").dropna()
+                if len(datos)==0: continue
+                f.write(f"  {metrica}:\n")
+                f.write(f"    Media: {np.mean(datos):.3f}\n")
+                f.write(f"    Mediana: {np.median(datos):.3f}\n")
+                f.write(f"    Desv. estándar: {np.std(datos):.3f}\n")
+                f.write(f"    Mínimo: {np.min(datos):.3f}\n")
+                f.write(f"    Máximo: {np.max(datos):.3f}\n")
+                f.write(f"    Q1: {np.percentile(datos,25):.3f} | Q3: {np.percentile(datos,75):.3f}\n")
+            # Porcentaje de errores y respuestas perfectamente coherentes
+            total = len(dfm)
+            errores = int(dfm["Contiene Error"].sum())
+            perfectas = int((dfm["Coherencia"]==1).sum())
+            f.write(f"  Respuestas con error: {errores}/{total} ({100*errores/total:.1f}%)\n")
+            f.write(f"  Respuestas perfectamente coherentes: {perfectas}/{total} ({100*perfectas/total:.1f}%)\n\n")
+        
+        f.write("===== RANKING DE MODELOS POR MÉTRICA =====\n\n")
+        # Ranking de modelos para cada métrica
+        for metrica in metricas:
+            resumen = df.groupby("Modelo")[metrica].apply(lambda x: pd.to_numeric(x, errors='coerce').mean())
+            if metrica == "Latencia (seg)":  # menor es mejor
+                resumen = resumen.sort_values()
+            else:
+                resumen = resumen.sort_values(ascending=False)
+            f.write(f"Ranking por {metrica} (mejor primero):\n")
+            for i, (modelo, valor) in enumerate(resumen.items(),1):
+                f.write(f"  {i}. {modelo}: {valor:.3f}\n")
+            f.write("\n")
+        
+        # Correlación longitud-latencia
+        f.write("===== CORRELACIÓN LONGITUD-LATENCIA =====\n")
+        try:
+            x = pd.to_numeric(df["Longitud respuesta"], errors="coerce")
+            y = pd.to_numeric(df["Latencia (seg)"], errors="coerce")
+            corr = np.corrcoef(x.dropna(), y.dropna())[0,1]
+            f.write(f"Correlación Pearson longitud-latencia: {corr:.3f}\n")
+        except Exception as e:
+            f.write(f"No se pudo calcular la correlación: {e}\n")
+
+    print(f"Resumen estadístico exportado en {path_txt}")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Benchmark académico de modelos RAG‑LLMs sobre PDF.")
@@ -215,6 +320,11 @@ def main():
     df = pd.DataFrame(resultados)
     generar_reportes(df, out_dir)
     graficos_academicos(df, out_dir)
+
+    # ------- AQUI LLAMAS EL RESUMEN ESTADÍSTICO -------
+    resumen_estadistico(df, out_dir)
+    # ---------------------------------------------------
+
     print(f"\nTodos los archivos de resultados y gráficos están en: {out_dir}\n")
     print(tabulate(df[["Modelo","Pregunta","Latencia (seg)","Coherencia","Contiene Error","Observación"]],
                    headers="keys", showindex=False, tablefmt="psql", numalign="right"))
